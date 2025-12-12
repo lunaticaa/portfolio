@@ -1,6 +1,7 @@
 import { useState } from "react"
 import emailjs from "@emailjs/browser"
 import Alert from "../components/Alert"
+import { Particles } from "../components/Particles"
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -8,10 +9,24 @@ const Contact = () => {
     message: ""
   })
 
+  const [showAlert, setShowAlert] = useState(false)
+  const [alertType, setAlertType] = useState("success")
+
+  const [alertMessage, setAlertMessage] = useState("")
+
   const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const showAlertMessage = (type, message) => {
+    setAlertType(type)
+    setAlertMessage(message)
+    setShowAlert(true)
+    setTimeout(() => {
+      setShowAlert(false)
+    }, 3000);
   }
   const handleSubmit = async (e) => {
     setIsLoading(true)
@@ -27,27 +42,24 @@ const Contact = () => {
         to_email: "amir830047ojddgh@gmail.com",
       }, "SCDv_ANPzoQWpqlUs")
       setIsLoading(false)
-      alert("success")
-    } catch (error) {
-      setIsLoading(false)
       setFormData({
         name: "",
         email: "",
         message: ""
       })
+      showAlertMessage("success", "Message sent successfully!")
+    } catch (error) {
+      setIsLoading(false)
       console.log(error);
-      alert("failed")
-
+      showAlertMessage("danger", "Something went wrong. Please try again.")
     }
-
-
     // service_29zh44u
     // template_bc91vgs
-
   }
   return (
     <section className="relative flex items-center c-space section-spacing">
-      <Alert />
+      <Particles />
+      {showAlert && <Alert type={alertType} text={alertMessage} />}
       <div className="flex flex-col items-center justify-center max-w-md p-5 mx-auto border border-white/10 rounded-2xl bg-primary">
         <div className="flex flex-col items-start w-full gap-5 mb-10">
           <h2 className="text-heading">Let's talk</h2>
