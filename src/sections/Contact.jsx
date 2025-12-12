@@ -1,21 +1,53 @@
 import { useState } from "react"
-
+import emailjs from "@emailjs/browser"
+import Alert from "../components/Alert"
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: ""
   })
+
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    setIsLoading(true)
     e.preventDefault()
-    console.log(formData);
+
+    try {
+      console.log("form submitted", formData);
+      await emailjs.send("service_29zh44u", "template_bc91vgs", {
+        from_name: formData.name,
+        to_name: "Amir Mohammad",
+        from_email: formData.email,
+        message: formData.message,
+        to_email: "amir830047ojddgh@gmail.com",
+      }, "SCDv_ANPzoQWpqlUs")
+      setIsLoading(false)
+      alert("success")
+    } catch (error) {
+      setIsLoading(false)
+      setFormData({
+        name: "",
+        email: "",
+        message: ""
+      })
+      console.log(error);
+      alert("failed")
+
+    }
+
+
+    // service_29zh44u
+    // template_bc91vgs
 
   }
   return (
     <section className="relative flex items-center c-space section-spacing">
+      <Alert />
       <div className="flex flex-col items-center justify-center max-w-md p-5 mx-auto border border-white/10 rounded-2xl bg-primary">
         <div className="flex flex-col items-start w-full gap-5 mb-10">
           <h2 className="text-heading">Let's talk</h2>
@@ -63,7 +95,7 @@ const Contact = () => {
               required
             />
           </div>
-          <button className="w-full px-1 py-3 text-center rounded-md cursor-pointer bg-radial from-lavender to-royal hover-animation" type="submit">send</button>
+          <button className="w-full px-1 py-3 text-center rounded-md cursor-pointer bg-radial from-lavender to-royal hover-animation" type="submit">{!isLoading ? "send" : "sending..."}</button>
         </form>
       </div>
     </section>
